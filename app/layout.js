@@ -11,6 +11,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: "🚀 RensAI-Career Coach",
   description: "",
+  icons: {
+    icon: "/icon1.png", 
+  },
 };
 
 export default function RootLayout({ children }) {
