@@ -24,9 +24,7 @@ export default function RootLayout({ children }) {
       }}
     >
       <html lang="en" suppressHydrationWarning>
-        <head>
-          <link rel="icon" href="/icon1.png" sizes="any" />
-        </head>
+        
         <body className={`${inter.className}`}>
           <ThemeProvider
             attribute="class"
