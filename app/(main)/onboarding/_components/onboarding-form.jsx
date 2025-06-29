@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -77,7 +78,8 @@ const OnboardingForm = ({ industries }) => {
             Complete Your Profile
           </CardTitle>
           <CardDescription className="text-muted-foreground text-sm mt-2">
-            Select your industry to receive tailored insights and career guidance.
+            Select your industry to receive tailored insights and career
+            guidance.
           </CardDescription>
         </CardHeader>
 
@@ -89,11 +91,16 @@ const OnboardingForm = ({ industries }) => {
               <Select
                 onValueChange={(value) => {
                   setValue("industry", value);
-                  setSelectedIndustry(industries.find((ind) => ind.id === value));
+                  setSelectedIndustry(
+                    industries.find((ind) => ind.id === value)
+                  );
                   setValue("subIndustry", "");
                 }}
               >
-                <SelectTrigger id="industry" className="bg-muted/10 border-white/10">
+                <SelectTrigger
+                  id="industry"
+                  className="bg-muted/10 border-white/10"
+                >
                   <SelectValue placeholder="Select an industry" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border border-white/10 shadow-xl">
@@ -108,7 +115,9 @@ const OnboardingForm = ({ industries }) => {
                 </SelectContent>
               </Select>
               {errors.industry && (
-                <p className="text-sm text-red-500">{errors.industry.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.industry.message}
+                </p>
               )}
             </div>
 
@@ -116,8 +125,13 @@ const OnboardingForm = ({ industries }) => {
             {watchIndustry && (
               <div className="space-y-2">
                 <Label htmlFor="subIndustry">Specialization</Label>
-                <Select onValueChange={(value) => setValue("subIndustry", value)}>
-                  <SelectTrigger id="subIndustry" className="bg-muted/10 border-white/10">
+                <Select
+                  onValueChange={(value) => setValue("subIndustry", value)}
+                >
+                  <SelectTrigger
+                    id="subIndustry"
+                    className="bg-muted/10 border-white/10"
+                  >
                     <SelectValue placeholder="Select your specialization" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-white/10 shadow-xl">
@@ -132,7 +146,9 @@ const OnboardingForm = ({ industries }) => {
                   </SelectContent>
                 </Select>
                 {errors.subIndustry && (
-                  <p className="text-sm text-red-500">{errors.subIndustry.message}</p>
+                  <p className="text-sm text-red-500">
+                    {errors.subIndustry.message}
+                  </p>
                 )}
               </div>
             )}
@@ -150,7 +166,9 @@ const OnboardingForm = ({ industries }) => {
                 className="bg-muted/10 border-white/10"
               />
               {errors.experience && (
-                <p className="text-sm text-red-500">{errors.experience.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.experience.message}
+                </p>
               )}
             </div>
 
