@@ -78,34 +78,35 @@ const OnboardingForm = ({ industries }) => {
             Complete Your Profile
           </CardTitle>
           <CardDescription className="text-muted-foreground text-sm mt-2">
-            Select your industry to receive tailored insights and career
-            guidance.
+            Select your industry to receive tailored insights and career guidance.
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
             {/* Industry Select */}
             <div className="space-y-2">
-              <Label htmlFor="industry">Industry</Label>
+              <Label htmlFor="industry" className="text-black dark:text-white">Industry</Label>
               <Select
                 onValueChange={(value) => {
                   setValue("industry", value);
-                  setSelectedIndustry(
-                    industries.find((ind) => ind.id === value)
-                  );
+                  setSelectedIndustry(industries.find((ind) => ind.id === value));
                   setValue("subIndustry", "");
                 }}
               >
                 <SelectTrigger
                   id="industry"
-                  className="bg-muted/10 border-white/10"
+                  className="bg-white text-black border border-gray-300 rounded-md px-3 py-2
+                             dark:bg-zinc-900 dark:text-white dark:border-zinc-700"
                 >
                   <SelectValue placeholder="Select an industry" />
                 </SelectTrigger>
-                <SelectContent className="bg-background border border-white/10 shadow-xl">
+                <SelectContent
+                  className="bg-white text-black border border-gray-300 shadow-xl rounded-md
+                             dark:bg-zinc-900 dark:text-white dark:border-zinc-700"
+                >
                   <SelectGroup>
-                    <SelectLabel>Industries</SelectLabel>
+                    <SelectLabel className="text-gray-700 dark:text-gray-300">Industries</SelectLabel>
                     {industries.map((ind) => (
                       <SelectItem key={ind.id} value={ind.id}>
                         {ind.name}
@@ -115,28 +116,28 @@ const OnboardingForm = ({ industries }) => {
                 </SelectContent>
               </Select>
               {errors.industry && (
-                <p className="text-sm text-red-500">
-                  {errors.industry.message}
-                </p>
+                <p className="text-sm text-red-500">{errors.industry.message}</p>
               )}
             </div>
 
             {/* Sub-Industry Select */}
             {watchIndustry && (
               <div className="space-y-2">
-                <Label htmlFor="subIndustry">Specialization</Label>
-                <Select
-                  onValueChange={(value) => setValue("subIndustry", value)}
-                >
+                <Label htmlFor="subIndustry" className="text-black dark:text-white">Specialization</Label>
+                <Select onValueChange={(value) => setValue("subIndustry", value)}>
                   <SelectTrigger
                     id="subIndustry"
-                    className="bg-muted/10 border-white/10"
+                    className="bg-white text-black border border-gray-300 rounded-md px-3 py-2
+                               dark:bg-zinc-900 dark:text-white dark:border-zinc-700"
                   >
                     <SelectValue placeholder="Select your specialization" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background border border-white/10 shadow-xl">
+                  <SelectContent
+                    className="bg-white text-black border border-gray-300 shadow-xl rounded-md
+                               dark:bg-zinc-900 dark:text-white dark:border-zinc-700"
+                  >
                     <SelectGroup>
-                      <SelectLabel>Specializations</SelectLabel>
+                      <SelectLabel className="text-gray-700 dark:text-gray-300">Specializations</SelectLabel>
                       {selectedIndustry?.subIndustries.map((sub) => (
                         <SelectItem key={sub} value={sub}>
                           {sub}
@@ -146,16 +147,14 @@ const OnboardingForm = ({ industries }) => {
                   </SelectContent>
                 </Select>
                 {errors.subIndustry && (
-                  <p className="text-sm text-red-500">
-                    {errors.subIndustry.message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.subIndustry.message}</p>
                 )}
               </div>
             )}
 
             {/* Experience Input */}
             <div className="space-y-2">
-              <Label htmlFor="experience">Years of Experience</Label>
+              <Label htmlFor="experience" className="text-black dark:text-white">Years of Experience</Label>
               <Input
                 id="experience"
                 type="number"
@@ -163,23 +162,23 @@ const OnboardingForm = ({ industries }) => {
                 max="50"
                 placeholder="Enter number of years"
                 {...register("experience")}
-                className="bg-muted/10 border-white/10"
+                className="bg-white text-black border border-gray-300
+                           dark:bg-zinc-900 dark:text-white dark:border-zinc-700"
               />
               {errors.experience && (
-                <p className="text-sm text-red-500">
-                  {errors.experience.message}
-                </p>
+                <p className="text-sm text-red-500">{errors.experience.message}</p>
               )}
             </div>
 
             {/* Skills Input */}
             <div className="space-y-2">
-              <Label htmlFor="skills">Skills</Label>
+              <Label htmlFor="skills" className="text-black dark:text-white">Skills</Label>
               <Input
                 id="skills"
                 placeholder="e.g., TypeScript, UX Design, Leadership"
                 {...register("skills")}
-                className="bg-muted/10 border-white/10"
+                className="bg-white text-black border border-gray-300
+                           dark:bg-zinc-900 dark:text-white dark:border-zinc-700"
               />
               <p className="text-xs text-muted-foreground">
                 Separate multiple skills with commas
@@ -191,11 +190,12 @@ const OnboardingForm = ({ industries }) => {
 
             {/* Bio Input */}
             <div className="space-y-2">
-              <Label htmlFor="bio">Professional Bio</Label>
+              <Label htmlFor="bio" className="text-black dark:text-white">Professional Bio</Label>
               <Textarea
                 id="bio"
                 placeholder="Briefly describe your background, strengths, and goals..."
-                className="h-32 bg-muted/10 border-white/10"
+                className="h-32 bg-white text-black border border-gray-300
+                           dark:bg-zinc-900 dark:text-white dark:border-zinc-700"
                 {...register("bio")}
               />
               {errors.bio && (

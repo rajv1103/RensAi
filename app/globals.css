@@ -194,3 +194,14 @@
 .animate-float{
   animation: float-circle 4s ease-in-out infinite;
 }
+/* In global CSS or Tailwind classes */
+#resume-pdf * {
+  color: black !important;
+  background-color: white !important;
+}
+/* styles/globals.css or module.css */
+.disable-oklch * {
+  color: black !important;
+  background-color: white !important;
+  border-color: black !important;
+}

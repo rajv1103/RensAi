@@ -1,5 +1,5 @@
 "use client";
-
+import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,9 +23,15 @@ import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
 import { entriesToMarkdown } from "@/app/lib/helper";
 import { resumeSchema } from "@/app/lib/schema";
-import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
+
+// dynamically load the PDF hook on client only
+const useGeneratePDF = dynamic(
+  () => import("./useGeneratePDF").then((mod) => mod.useGeneratePDF),
+  { ssr: false }
+);
 
 export default function ResumeBuilder({ initialContent }) {
+  const { generatePDF, isGenerating } = useGeneratePDF?.() || {};
   const [activeTab, setActiveTab] = useState("edit");
   const [previewContent, setPreviewContent] = useState(initialContent);
   const { user } = useUser();
@@ -56,32 +62,30 @@ export default function ResumeBuilder({ initialContent }) {
     error: saveError,
   } = useFetch(saveResume);
 
-  // Watch form fields for preview updates
   const formValues = watch();
 
   useEffect(() => {
     if (initialContent) setActiveTab("preview");
   }, [initialContent]);
 
-  // Update preview content when form values change
   useEffect(() => {
     if (activeTab === "edit") {
       const newContent = getCombinedContent();
-      setPreviewContent(newContent ? newContent : initialContent);
+      console.log(
+        "Generating PDF with content length:",
+        previewContent?.length
+      );
+
+      setPreviewContent(newContent || initialContent);
     }
   }, [formValues, activeTab]);
 
-  // Handle save result
   useEffect(() => {
-    if (saveResult && !isSaving) {
-      toast.success("Resume saved successfully!");
-    }
-    if (saveError) {
-      toast.error(saveError.message || "Failed to save resume");
-    }
+    if (saveResult && !isSaving) toast.success("Resume saved successfully!");
+    if (saveError) toast.error(saveError.message || "Failed to save resume");
   }, [saveResult, saveError, isSaving]);
 
-  const getContactMarkdown = () => {
+  function getContactMarkdown() {
     const { contactInfo } = formValues;
     const parts = [];
     if (contactInfo.email) parts.push(`📧 ${contactInfo.email}`);
@@ -89,14 +93,14 @@ export default function ResumeBuilder({ initialContent }) {
     if (contactInfo.linkedin)
       parts.push(`💼 [LinkedIn](${contactInfo.linkedin})`);
     if (contactInfo.twitter) parts.push(`🐦 [Twitter](${contactInfo.twitter})`);
-
-    return parts.length > 0
-      ? `## <div align="center">${user.fullName}</div>
-        \n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
+    return parts.length
+      ? `## <div align="center">${
+          user.fullName
+        }</div>\n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
       : "";
-  };
+  }
 
-  const getCombinedContent = () => {
+  function getCombinedContent() {
     const { summary, skills, experience, education, projects } = formValues;
     return [
       getContactMarkdown(),
@@ -108,43 +112,15 @@ export default function ResumeBuilder({ initialContent }) {
     ]
       .filter(Boolean)
       .join("\n\n");
-  };
+  }
 
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const generatePDF = async () => {
-    setIsGenerating(true);
-    try {
-      const element = document.getElementById("resume-pdf");
-      const opt = {
-        margin: [15, 15],
-        filename: "resume.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
-
-      await html2pdf().set(opt).from(element).save();
-    } catch (error) {
-      console.error("PDF generation error:", error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const onSubmit = async (data) => {
-    try {
-      const formattedContent = previewContent
-        .replace(/\n/g, "\n") // Normalize newlines
-        .replace(/\n\s*\n/g, "\n\n") // Normalize multiple newlines to double newlines
-        .trim();
-
-      console.log(previewContent, formattedContent);
-      await saveResumeFn(previewContent);
-    } catch (error) {
-      console.error("Save error:", error);
-    }
-  };
+  async function onSubmit() {
+    const formatted = previewContent
+      .replace(/\n/g, "\n")
+      .replace(/\n\s*\n/g, "\n\n")
+      .trim();
+    await saveResumeFn(formatted);
+  }
 
   return (
     <div data-color-mode="light" className="space-y-4">
@@ -165,8 +141,7 @@ export default function ResumeBuilder({ initialContent }) {
               </>
             ) : (
               <>
-                <Save className="h-4 w-4" />
-                Save
+                <Save className="h-4 w-4" /> Save
               </>
             )}
           </Button>
@@ -178,8 +153,7 @@ export default function ResumeBuilder({ initialContent }) {
               </>
             ) : (
               <>
-                <Download className="h-4 w-4" />
-                Download PDF
+                <Download className="h-4 w-4" /> Download PDF
               </>
             )}
           </Button>
@@ -401,13 +375,17 @@ export default function ResumeBuilder({ initialContent }) {
               preview={resumeMode}
             />
           </div>
-          <div className="hidden">
+
+          <div className="sr-only">
             <div id="resume-pdf">
               <MDEditor.Markdown
                 source={previewContent}
                 style={{
                   background: "white",
                   color: "black",
+                  padding: "2rem",
+                  width: "100%", // or a fixed px width
+                  maxWidth: "800px", // optional
                 }}
               />
             </div>
